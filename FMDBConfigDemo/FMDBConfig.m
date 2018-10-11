@@ -12,6 +12,8 @@
 @interface FMDBConfig ()
 @property (nonatomic, strong) FMDatabase *db;
 
+@property (nonatomic, strong) FMDatabaseQueue *dbQueue;
+
 @property (nonatomic, strong) NSMutableDictionary *configs;
 
 @property (nonatomic, strong) NSDictionary *defaults;
@@ -67,6 +69,7 @@
         {
             isRecordExist = YES;
         }
+        [rs close];
         
         if (!isRecordExist)
         {
@@ -81,6 +84,9 @@
             NSString *column = [schema stringForColumn:@"name"];
             _configs[column] = [NSNumber numberWithBool:YES];
         }
+        [schema close];
+        
+        _dbQueue = [FMDatabaseQueue databaseQueueWithPath:path];
     }
     
     return self;
@@ -112,7 +118,11 @@
     
     // 测试结果表明：update某个config的值不会影响其他的。 注意：这里的问号只能用来表达值，而不能是key。
     NSString *sql = [NSString stringWithFormat:@"UPDATE config SET %@ = ? where id = ?", key];
-    BOOL result = [self.db executeUpdate:sql, value, @(1)];
+    
+    __block BOOL result;
+    [self.dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+        result = [db executeUpdate:sql, value, @(1)];
+    }];
     return result;
 }
 
@@ -134,12 +144,15 @@
     else
     {
         // 获取保存配置的该条记录。
-        FMResultSet *result =  [_db executeQuery:@"select * from config where id = 1"];
-        NSString *config = nil;
-        while ([result next])
-        {
-            config = [result stringForColumn:key];
-        }
+        __block NSString *config = nil;
+        [self.dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+            FMResultSet *result = [db executeQuery:@"select * from config where id = 1"];
+            while ([result next])
+            {
+                config = [result stringForColumn:key];
+            }
+            [result close];
+        }];
         
         if ([config length] > 0)
         {
@@ -185,21 +198,28 @@
 - (void)addKey:(NSString *)key
 {
     NSString *sql = [NSString stringWithFormat:@"ALTER TABLE %@ ADD %@ TEXT",@"config", key];
-    BOOL result = [self.db executeUpdate:sql];
-    if (result)
-    {
-        NSLog(@"add key success");
-    }
-    else
-    {
-        NSLog(@"add key failed");
-    }
+    
+    [self.dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+        BOOL result = [db executeUpdate:sql];
+        if (result)
+        {
+            NSLog(@"add key success");
+        }
+        else
+        {
+            NSLog(@"add key failed");
+        }
+    }];
 }
 
 - (void)cleanAll
 {
     NSString *deleteSql = @"delete from config";
     [self.db executeUpdate:deleteSql];
+    
+    [self.dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+        [db executeUpdate:deleteSql];
+    }];
 }
 
 @end

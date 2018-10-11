@@ -5,7 +5,7 @@
 //  Created by Zhenwei Guan on 2018/10/11.
 //  Copyright © 2018 Zhenwei Guan. All rights reserved.
 //
-//  多线程使用可能会有问题？
+//  已经支持了多线程并发，设置/取值/清理都是用queue来操作，保证线程安全。
 
 #import <Foundation/Foundation.h>
 
