@@ -39,8 +39,10 @@
     [FMDBConfig sharedInstance];
     
     
-    NSString *password = [[FMDBConfig sharedInstance] configValueFromKey:kPassword];
-    NSString *userName = [[FMDBConfig sharedInstance] configValueFromKey:kUserName];
+    NSString *password = [[FMDBConfig sharedInstance] valueFromKey:kPassword];
+    NSString *userName = [[FMDBConfig sharedInstance] valueFromKey:kUserName];
+    
+    NSString *test = [[FMDBConfig sharedInstance] valueFromKey:kTestConfig2];
     
     // Do any additional setup after loading the view, typically from a nib.
     
@@ -149,13 +151,14 @@
 
 - (IBAction)config1Set:(id)sender
 {
+    [GFMDBConfig cleanAll];
     
 //    NSString *sql = @"insert into config (id,config1,cxy) values(?,?,?) ";
 //    BOOL res = [self.db executeUpdate:sql, @(10),@"xxxxxYou111",@"cxyTest"];
 
     // 结果表明：update某个config的值不会影响其他的。 注意：这里的问号只能用来表达值，而不能是key。
-    NSString *sql = @"UPDATE config SET config1 = ? WHERE id = ?";
-    BOOL res = [self.db executeUpdate:sql, @"suzhiwanjia", @"9"];
+//    NSString *sql = @"UPDATE config SET config1 = ? WHERE id = ?";
+//    BOOL res = [self.db executeUpdate:sql, @"suzhiwanjia", @"9"];
 //    if (!res) {
 //        NSLog(@"error to UPDATE data");
 //    } else {

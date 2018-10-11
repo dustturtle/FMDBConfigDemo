@@ -14,6 +14,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary *configs;
 
+@property (nonatomic, strong) NSDictionary *defaults;
+
 @end
 
 @implementation FMDBConfig
@@ -39,6 +41,7 @@
     if (self)
     {
         _configs = [NSMutableDictionary dictionary];
+        _defaults = [self configDefaults];
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -83,6 +86,15 @@
     return self;
 }
 
+// You may config default value here.
+- (NSDictionary *)configDefaults
+{
+    return @{
+             kPassword:@"666666",
+             kTestConfig2:@"极致的菜就是川菜"
+             };
+}
+
 - (BOOL)configWithKey:(NSString *)key value:(NSString *)value
 {
     if ([key length] == 0 || value == nil)
@@ -108,8 +120,16 @@
 {
     if (_configs[key] == nil)
     {
-        // 没有这个key,直接返回空字符串
-        return @"";
+        if([_defaults[key] length] > 0)
+        {
+            // default
+            return _defaults[key];
+        }
+        else
+        {
+            // 没有这个key,直接返回空字符串
+            return @"";
+        }
     }
     else
     {
@@ -127,7 +147,16 @@
         }
         else
         {
-            return @"";
+            if([_defaults[key] length] > 0)
+            {
+                // default
+                return _defaults[key];
+            }
+            else
+            {
+                // 没有这个key,直接返回空字符串
+                return @"";
+            }
         }
     }
 }
@@ -165,6 +194,12 @@
     {
         NSLog(@"add key failed");
     }
+}
+
+- (void)cleanAll
+{
+    NSString *deleteSql = @"delete from config";
+    [self.db executeUpdate:deleteSql];
 }
 
 @end

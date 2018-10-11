@@ -5,6 +5,7 @@
 //  Created by Zhenwei Guan on 2018/10/11.
 //  Copyright © 2018 Zhenwei Guan. All rights reserved.
 //
+//  多线程使用可能会有问题？
 
 #import <Foundation/Foundation.h>
 
@@ -31,6 +32,9 @@
 - (NSString *)valueFromKey:(NSString *)key;
 
 - (BOOL)flagFromKey:(NSString *)key; // 用于保存开关类的配置项: @"0" NO/@"1" YES
+
+// 特殊用途，删除所有配置项的值。
+- (void)cleanAll;
 
 @end
 
