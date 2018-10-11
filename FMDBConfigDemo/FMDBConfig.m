@@ -5,6 +5,9 @@
 //  Created by Zhenwei Guan on 2018/10/11.
 //  Copyright © 2018 Zhenwei Guan. All rights reserved.
 //
+/// HINT: 这里的场景操作都应该比较快，直截了当的使用FMDatabaseQueue来解决多线程的问题是OK的；
+/// 但对于某些耗时甚巨的操作（几秒甚至数十秒）,可以考虑单独make一个FMDatabase出来并放到单独的线程中去做:
+/// (也可以在主线程尝试看看，在保证不会卡死页面的前提下对比耗时）。 用实践来检验一切！！！！！！
 
 #import "FMDBConfig.h"
 #import "FMDB.h"
