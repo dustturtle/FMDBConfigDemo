@@ -67,6 +67,10 @@
             [self.db executeUpdate:createTableSQL];
         }
         
+        /// 注意：这里的db只有一条记录；也可以改造成多条记录；
+        /// 每条记录代表一个config, 数据库的字段是固定的，包括key/value及其他有必要添加的信息等。(YapDB是这么干的)
+        /// TODO: 可以对这两种方法做性能测试（BenchMark），择其性能优者用之。
+        
         // 3.插入唯一的一条记录。(若不存在)
         NSString *sqlQuery = @"select *from config where id = ?";
         FMResultSet *rs = [self.db executeQuery:sqlQuery, @(1)];
