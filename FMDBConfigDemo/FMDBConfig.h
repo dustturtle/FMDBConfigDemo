@@ -31,7 +31,8 @@
 
 - (NSString *)valueFromKey:(NSString *)key;
 
-- (BOOL)flagFromKey:(NSString *)key; // 用于保存开关类的配置项: @"0" NO/@"1" YES
+// 用于保存开关类的配置项: @"0" NO/@"1" YES
+- (BOOL)flagFromKey:(NSString *)key;
 
 // 特殊用途，删除所有配置项的值。
 - (void)cleanAll;

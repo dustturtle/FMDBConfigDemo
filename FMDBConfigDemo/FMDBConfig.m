@@ -11,13 +11,10 @@
 
 @interface FMDBConfig ()
 @property (nonatomic, strong) FMDatabase *db;
-
 @property (nonatomic, strong) FMDatabaseQueue *dbQueue;
 
 @property (nonatomic, strong) NSMutableDictionary *configs;
-
 @property (nonatomic, strong) NSDictionary *defaults;
-
 @end
 
 @implementation FMDBConfig
@@ -33,6 +30,15 @@
     });
     
     return globalConfig;
+}
+
+// You may config default value here.
+- (NSDictionary *)configDefaults
+{
+    return @{
+             kPassword:@"666666",
+             kTestConfig2:@"极致的菜就是川菜"
+             };
 }
 
 #pragma - mark System methods
@@ -90,15 +96,6 @@
     }
     
     return self;
-}
-
-// You may config default value here.
-- (NSDictionary *)configDefaults
-{
-    return @{
-             kPassword:@"666666",
-             kTestConfig2:@"极致的菜就是川菜"
-             };
 }
 
 - (BOOL)configWithKey:(NSString *)key value:(NSString *)value
